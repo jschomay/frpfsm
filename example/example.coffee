@@ -24,5 +24,5 @@ fsm.loadState
   name: "End"
   state: endState
 
-currentState = fsm.start startState, 0
-# currentState.log()
+currentState = fsm.start startState, 0, true
+# currentState.log("Entering state")

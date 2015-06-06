@@ -2,15 +2,17 @@
 
 STATES = {}
 
-enterState = ([state, initialData]) ->
-  console.log "entering #{STATES[state].name.toUpperCase()} with data #{initialData}"
+enterState = (debug, [state, initialData]) ->
+  if debug
+    console.debug "Enter #{STATES[state].name.toUpperCase()} with initial data #{initialData}"
   state(initialData)
     .take(1)
     .map ([transition, exitData]) =>
-      console.log "\"#{transition}\" transition with data #{exitData}"
+      if debug
+        console.debug "Exit #{STATES[state].name.toUpperCase()} with transition \"#{transition}\""
       nextState = STATES[state].transitions[transition]
       [nextState, exitData]
-    .flatMap(enterState)
+    .flatMap(enterState.bind this, debug)
     .toProperty(-> [STATES[state].name, initialData])
 
 
@@ -22,7 +24,7 @@ module.exports =
       name: stateConfig.name
       transitions: stateConfig.transitions
 
-  start: (state, initialData) ->
-    currentState = enterState [state, initialData]
+  start: (state, initialData, debug = false) ->
+    currentState = enterState debug, [state, initialData]
     # subscribe to initiate the stream
     currentState.onAny(->)
