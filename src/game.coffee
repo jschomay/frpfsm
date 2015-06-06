@@ -1,27 +1,34 @@
-# TODO
-# - have states return a key for the state instead of the function
-# - or use the transition mapper
-# - log state name instead of function
-# - test with more states
-# - pull out into separate file?
-# - use actual states
+# FRPFSM - Functionally Reactive Programming Finite State Machine
 
+
+# TODO - wrap this up in a factory function
 STATES =
-START: (data) -> Kefir.later(1000, [STATES.PLAY])
-PLAY: (data) -> Kefir.later(2000, [STATES.START, "You won"])
+  START: (data) -> Kefir.later(1000, ["begin", 0])
+  PLAY: (count) ->
+    Kefir
+      .later(1000)
+      .map -> if count < 3 then ["replay", count + 1] else ["finish"]
+  END: (data) -> Kefir.never()
 
-count = 0
-nextState = ([next, scope]) ->
-  # temp infinite loop breaker
-  if count++ > 3
-    console.log "finish"
-    return Kefir.never()
-  transitionTo = next scope
-  transitionTo
+STATES.START["begin"] = STATES.PLAY
+STATES.PLAY["replay"] = STATES.PLAY
+STATES.PLAY["finish"] = STATES.END
+
+STATES.START.label = "START"
+STATES.PLAY.label = "PLAY"
+STATES.END.label = "END"
+
+enterState = ([state, initialData]) ->
+  console.log "entering #{state.label} with data #{initialData}"
+  state(initialData)
     .take(1)
-    .flatMap(nextState)
-    .toProperty(-> [next, scope])
+    .map ([transition, exitData]) =>
+      console.log "\"#{transition}\" transition with data #{exitData}"
+      [state[transition], exitData]
+    .flatMap(enterState)
+    .toProperty(-> [state.label, initialData])
 
-currentState = nextState [STATES.START, "start"]
+currentState = enterState [STATES.START]
 
-currentState.log("Entering state")
+# subscribe to initiate the stream
+currentState.onAny(->)
