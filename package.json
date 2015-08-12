@@ -1,11 +1,11 @@
 {
-  "name": "grammy-cards",
-  "description": "Description",
-  "author": "Your Name",
+  "name": "frpfsm",
+  "description": "FRP Finite State Machine",
+  "author": "Jeff Schomay",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "http://github.com/jschomay/frpfsm"
   },
   "scripts": {
     "start": "brunch watch --server",
@@ -17,6 +17,7 @@
     "coffee-script-brunch": "^1.8.1",
     "css-brunch": ">= 1.0 < 1.8",
     "javascript-brunch": ">= 1.0 < 1.8",
+    "kefir": "^2.7.2",
     "uglify-js-brunch": ">= 1.0 < 1.8"
   }
 }

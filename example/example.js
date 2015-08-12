@@ -1,4 +1,4 @@
-frpfsm = require("../src/fsm");
+frpfsm = require("src/frpfsm");
 
 // game states
 startState = require("./start");
