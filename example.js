@@ -158,28 +158,28 @@ endState = require("./end");
 // define the transitions between states
 frpfsm.loadState({
   name: "Start",
-  state: startState,
+  fn: startState,
   transitions:{
-    "begin": playState
+    "begin": "Play"
   }
 });
 
 frpfsm.loadState({
   name: "Play",
-  state: playState,
+  fn: playState,
   transitions: {
-    "replay": playState,
-    "finish": endState
+    "replay": "Play",
+    "finish": "End"
     }
 });
 
 frpfsm.loadState({
   name: "End",
-  state: endState
+  fn: endState
 });
 
 debug = true;
-currentState = frpfsm.start(startState, 0, debug);
+currentState = frpfsm.start("Start", 0, debug);
 // currentState.log("Entering state");
 
 });

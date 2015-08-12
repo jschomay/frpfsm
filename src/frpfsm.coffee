@@ -2,29 +2,29 @@
 
 STATES = {}
 
-enterState = (debug, [state, initialData]) ->
+enterState = (debug, [stateName, initialData]) ->
+  requestedState = STATES[stateName]
   if debug
-    console.debug "Enter #{STATES[state].name.toUpperCase()} with initial data #{initialData}"
-  state(initialData)
+    console.debug "Enter #{stateName.toUpperCase()} with initial data #{initialData}"
+  requestedState.fn(initialData)
     .take(1)
     .map ([transition, exitData]) =>
       if debug
-        console.debug "Exit #{STATES[state].name.toUpperCase()} with transition \"#{transition}\""
-      nextState = STATES[state].transitions[transition]
+        console.debug "Exit #{stateName.toUpperCase()} with transition \"#{transition}\" and exit data #{exitData}"
+      nextState = requestedState.transitions[transition]
       [nextState, exitData]
     .flatMap(enterState.bind this, debug)
-    .toProperty(-> [STATES[state].name, initialData])
+    .toProperty(-> [stateName, initialData])
 
 
 
 module.exports =
   loadState: (stateConfig) ->
-    # (using state's function as key)
-    STATES[stateConfig.state] =
-      name: stateConfig.name
+    STATES[stateConfig.name] =
+      fn: stateConfig.fn
       transitions: stateConfig.transitions
 
-  start: (state, initialData, debug = false) ->
-    currentState = enterState debug, [state, initialData]
+  start: (stateName, initialData, debug = false) ->
+    currentState = enterState debug, [stateName, initialData]
     # subscribe to initiate the stream
     currentState.onAny(->)
