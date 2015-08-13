@@ -11,5 +11,7 @@ module.exports = function(remainingCash){
     report('You won $' + remainingCash + ', nice!');
   }
   report('(Refresh to play again)');
+
+  // "stop" the state machine
   return Kefir.never();
 };

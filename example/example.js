@@ -9,6 +9,7 @@ var config = {
 
 // game states
 var preloadState = require("./preload");
+var startState = require("./start");
 var playState = require("./play");
 var endState = require("./end");
 
@@ -17,7 +18,15 @@ frpfsm.loadState({
   name: "Preload",
   fn: preloadState,
   transitions:{
-    "loaded": "Play"
+    "loaded": "Start"
+  }
+});
+
+frpfsm.loadState({
+  name: "Start",
+  fn: startState,
+  transitions:{
+    "readyToPlay": "Play"
   }
 });
 

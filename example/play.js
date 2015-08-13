@@ -48,6 +48,5 @@ module.exports = function(winningThreshold, bid, walkAwayAmount, cashAtBeginingO
       } else {
         return ['stopPlaying', newCash];
       }
-    })
-    .delay(2000);
+    });
 };

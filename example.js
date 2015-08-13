@@ -156,6 +156,8 @@ module.exports = function(remainingCash){
     report('You won $' + remainingCash + ', nice!');
   }
   report('(Refresh to play again)');
+
+  // "stop" the state machine
   return Kefir.never();
 };
 
@@ -173,6 +175,7 @@ var config = {
 
 // game states
 var preloadState = require("./preload");
+var startState = require("./start");
 var playState = require("./play");
 var endState = require("./end");
 
@@ -181,7 +184,15 @@ frpfsm.loadState({
   name: "Preload",
   fn: preloadState,
   transitions:{
-    "loaded": "Play"
+    "loaded": "Start"
+  }
+});
+
+frpfsm.loadState({
+  name: "Start",
+  fn: startState,
+  transitions:{
+    "readyToPlay": "Play"
   }
 });
 
@@ -258,8 +269,7 @@ module.exports = function(winningThreshold, bid, walkAwayAmount, cashAtBeginingO
       } else {
         return ['stopPlaying', newCash];
       }
-    })
-    .delay(2000);
+    });
 };
 
 });
@@ -267,7 +277,21 @@ module.exports = function(winningThreshold, bid, walkAwayAmount, cashAtBeginingO
 require.register("example/preload", function(exports, require, module) {
 module.exports = function(startingCash) {
   // do preloading stuff here...
+  
+  // return a stream that emits an event after half a second (fake preload)
   return Kefir.later(500, ["loaded", startingCash]); 
+};
+
+});
+
+require.register("example/start", function(exports, require, module) {
+module.exports = function(startingCash) {
+
+  // return stream that emmits a transition event when the play button is clicked
+  return Kefir.fromEvents(document.querySelector('#start'), 'click')
+    .map(function() {
+      return ["readyToPlay", startingCash]; 
+    });
 };
 
 });
