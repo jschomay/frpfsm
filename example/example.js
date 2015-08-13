@@ -3,7 +3,7 @@ var frpfsm = require("src/frpfsm");
 var config = {
   startingAmount: 20,
   walkAwayAmount: 50,
-  bid: 5,
+  bid: 10,
   winningThreshold: 7,
 };
 
