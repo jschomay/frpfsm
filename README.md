@@ -1,24 +1,54 @@
 # frpfsm (FRP Finite State Machine)
 
-A small and simple FRP streams based state machine with a nice API for defining and transitioning states.  Built on top of kefir.js.
+A small and simple Functionally Reactive Programming (streams) based state machine with a nice API for defining and transitioning states.  Built on top of <a href="https://rpominov.github.io/kefir/">kefir.js</a>.
 
 ## Concept
 
-Each state is a factory function that takes initial data and returns a stream that emits a single event when it wants to transition to a different state, specifying the transition name and exit data.  Frpfsm connects all the state streams together.
+Each state is a factory function that takes initial data and returns a stream that emits a single event when it wants to transition to a different state, specifying the transition name and exit data.  frpfsm connects all the state streams together.
 
 ## Usage
 
 Initializing your states and transitions:
 
 ```javascript
+frpfsm.loadState({
+  name: "Preload",
+  fn: preloadState,
+  transitions:{
+    "loaded": "Start"
+  }
+});
+
+frpfsm.loadState({
+  name: "Start",
+  fn: startState,
+  transitions:{
+    "readyToPlay": "Play"
+    "changeSettings": "Settings"
+  }
+});
+
+// etc...
 
 ```
 
 Define your states:
 ```javascript
-// each state is just a function that takes initial data and must return
-// a kefir.js stream that emits an event // with the transition name and
-// exit data when it is time to change states
+startState = function(startingValue) {
+  // do other state stuff...
+
+  // return stream that emmits a transition event when the play button is clicked
+  return Kefir.fromEvents(document.querySelector('#start'), 'click')
+  .map(function() {
+    return ["readyToPlay", startingValue]; 
+  });
+};
 ```
 
-See `example.js` for a full example.
+Start the machine:
+```javascript
+var debug = true;
+frpfsm.start("Preload", startingValue, debug);
+```
+
+See `example.js` for a complete example.
