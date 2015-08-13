@@ -1,33 +1,42 @@
-frpfsm = require("src/frpfsm");
+var frpfsm = require("src/frpfsm");
+
+var config = {
+  startingAmount: 20,
+  walkAwayAmount: 50,
+  bid: 5,
+  winningThreshold: 7,
+};
 
 // game states
-startState = require("./start");
-playState = require("./play");
-endState = require("./end");
+var preloadState = require("./preload");
+var playState = require("./play");
+var endState = require("./end");
 
-// define the transitions between states
+// define the states and transitions
 frpfsm.loadState({
-  name: "Start",
-  fn: startState,
+  name: "Preload",
+  fn: preloadState,
   transitions:{
-    "begin": "Play"
+    "loaded": "Play"
   }
 });
 
+// note, partially applying the config values to playState
 frpfsm.loadState({
   name: "Play",
-  fn: playState,
+  fn: playState.bind(playState, config.winningThreshold, config.bid, config.walkAwayAmount),
   transitions: {
-    "replay": "Play",
-    "finish": "End"
+    "rollAgain": "Play",
+    "stopPlaying": "GameOver"
     }
 });
 
 frpfsm.loadState({
-  name: "End",
+  name: "GameOver",
   fn: endState
 });
 
-debug = true;
-currentState = frpfsm.start("Start", 0, debug);
-// currentState.log("Entering state");
+// start the state machine
+var debug = true;
+var fsm = frpfsm.start("Preload", config.startingAmount, debug);
+// fsm.log("State machine events stream");

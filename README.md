@@ -21,4 +21,4 @@ Define your states:
 // exit data when it is time to change states
 ```
 
-TODO - example is you start with $20 and roll the dice.  If the total is greater than a random number you double your money, otherwise you half it.  Keep rerolling until you run out of money (go to lose state), or make 100 (go to win state).
+See `example.js` for a full example.
