@@ -2,15 +2,22 @@
   "name": "frpfsm",
   "description": "FRP Finite State Machine",
   "author": "Jeff Schomay",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "http://github.com/jschomay/frpfsm"
   },
+  "main": "lib/frpfsm",
   "scripts": {
     "start": "brunch watch --server",
     "test": "brunch test"
   },
+  "license": "MIT",
+  "keywords": [
+    "frp",
+    "state machine",
+    "kefir"
+  ],
   "dependencies": {
     "auto-reload-brunch": ">= 1.0 < 1.8",
     "clean-css-brunch": ">= 1.0 < 1.8",
